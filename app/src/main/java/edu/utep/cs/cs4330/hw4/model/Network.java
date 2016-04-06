@@ -2,7 +2,6 @@ package edu.utep.cs.cs4330.hw4.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
 import java.security.Permission;
 
 /**
@@ -15,21 +14,20 @@ public class Network extends Player {
     private String pid = "";
     public Network(boolean playerOne) {
         super(playerOne);
+        webServiceHandler = new WebServiceHandler();
     }
 
     protected Network(Parcel in){
         super(in);
     }
 
-    public void strategyWebService(){
-        webServiceHandler = new WebServiceHandler(true);
+    public void smartWebService(){
+        webServiceHandler.setStrategy("smart");
         isStrategy = true;
-        pid = webServiceHandler.getPid();
     }
 
     public void randomWebService(){
-        webServiceHandler = new WebServiceHandler(false);
-        pid = webServiceHandler.getPid();
+        webServiceHandler.setStrategy("random");
     }
 
     public boolean isStrategy(){
@@ -44,6 +42,9 @@ public class Network extends Player {
         webServiceHandler.passCoordinates(pid, coordinates.getX(), coordinates.getY());
     }
 
+    public void startStrategy(){
+        webServiceHandler.executeStrategy();
+    }
     /**
      * Describe the kinds of special objects contained in this Parcelable's
      * marshalled representation.

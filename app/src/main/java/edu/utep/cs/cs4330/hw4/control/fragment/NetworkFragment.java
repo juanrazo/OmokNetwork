@@ -70,7 +70,7 @@ public class NetworkFragment extends Fragment {
             case R.id.radioButtonSmart:
                 if (checked) {
                     ((Network) ((GameActivity) getActivity()).
-                            getOmokGame().getPlayers()[1]).strategyWebService();
+                            getOmokGame().getPlayers()[1]).smartWebService();
                 }
                 break;
         }

@@ -25,18 +25,23 @@ public class WebServiceHandler {
     private boolean response = false;
     private Coordinates[] winRow = new Coordinates[5];
     private String pid = "";
+    private String strategy = "smart";
     private OmokServer server = new OmokServer();
 
-    public WebServiceHandler(boolean smart){
-        if(smart)
-            server.execute("http://www.cs.utep.edu/cheon/cs4330/project/omok/new?strategy=smart");
-        else
-            server.execute("http://www.cs.utep.edu/cheon/cs4330/project/omok/new?strategy=random");
+    public WebServiceHandler(){
     }
 
     public void passCoordinates(String id, int x, int y){
         server.execute("http://www.cs.utep.edu/cheon/cs4330/project/omok/play?pid="+id+"&move="+x+","+y);
                       //http://www.cs.utep.edu/cheon/cs4330/project/omok/play?pid=570498d22d0ec&move=0,5
+    }
+
+    public void setStrategy(String strategy){
+        this.strategy = "http://www.cs.utep.edu/cheon/cs4330/project/omok/new?strategy="+strategy;
+    }
+
+    public void executeStrategy(){
+        server.execute(strategy);
     }
     public class OmokServer extends AsyncTask<String, Void, String > {
 

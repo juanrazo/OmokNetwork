@@ -52,7 +52,8 @@ public class NetworkActivity extends GameActivity {
                 if (settingsFragment.getRadioButtonRandom().isSelected())
                     ((Network) omokGame.getPlayers()[1]).randomWebService();
                 else
-                    ((Network) omokGame.getPlayers()[1]).strategyWebService();
+                    ((Network) omokGame.getPlayers()[1]).smartWebService();
+                ((Network) omokGame.getPlayers()[1]).startStrategy();
                 omokGame.setBoard(new Board());
                 omokGame.setGameRunning(true);
                 omokGame.setTurn(0);
