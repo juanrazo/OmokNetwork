@@ -20,6 +20,7 @@ import edu.utep.cs.cs4330.hw4.model.Board;
 import edu.utep.cs.cs4330.hw4.model.Computer;
 import edu.utep.cs.cs4330.hw4.model.Coordinates;
 import edu.utep.cs.cs4330.hw4.model.Human;
+import edu.utep.cs.cs4330.hw4.model.Network;
 import edu.utep.cs.cs4330.hw4.model.OmokGame;
 import edu.utep.cs.cs4330.hw4.model.Player;
 import edu.utep.cs.cs4330.hw4.view.BoardView;
@@ -27,7 +28,7 @@ import edu.utep.cs.cs4330.hw4.view.BoardView;
 public class GameFragment extends Fragment {
     private BoardView boardView;
     private TextView textViewTurn;
-
+    private Coordinates previous = new Coordinates();
     public GameFragment() {
         // Required empty public constructor
     }
@@ -58,10 +59,18 @@ public class GameFragment extends Fragment {
                     }
                     Coordinates playCoordinates;
                     Player player = omokGame.getCurrentPlayer();
-                    if (player instanceof Computer)
-                        playCoordinates = ((Computer) omokGame.getCurrentPlayer()).findCoordinates(omokGame.getBoard().getBoard());
-                    else
+                    if (player instanceof Network){
+                        playCoordinates = new Coordinates(1,1);
+                        ((Network) omokGame.getPlayers()[1]).sendCoordinates(previous);
+                        playCoordinates = ((Network) omokGame.getPlayers()[1]).getCoordinates();
+                        Log.i("Network Coordinates", " " + playCoordinates.getX() + ", " + playCoordinates.getY());
+                    }
+                    else {
                         playCoordinates = new Coordinates(x, y);
+                        previous.setX(x);
+                        previous.setY(y);
+                        Log.i("Human Coordinates ", " " + x + ", " + y);
+                    }
                     if (omokGame.placeStone(playCoordinates)) {
                         boardView.invalidate();
                         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());

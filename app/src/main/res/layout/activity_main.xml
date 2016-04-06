@@ -29,4 +29,15 @@
         android:layout_below="@+id/buttonOnePlayer"
         android:layout_centerHorizontal="true"
         android:onClick="onButtonTwoPlayersClick" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/network_play"
+        android:id="@+id/buttonNetworkPlay"
+        android:layout_below="@+id/buttonTwoPlayers"
+        android:layout_centerHorizontal="true"
+        android:onClick="onButtonNetworkPlayClick" />
+
+
 </RelativeLayout>
