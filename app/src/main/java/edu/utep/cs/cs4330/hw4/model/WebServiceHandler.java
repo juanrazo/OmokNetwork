@@ -25,19 +25,19 @@ public class WebServiceHandler {
     private boolean response = false;
     private Coordinates[] winRow = new Coordinates[5];
     private String pid = "";
-    private String strategy = "smart";
+    private String strategy = "";
     private OmokServer server;
 
     public WebServiceHandler(){
         coordinates = new Coordinates(1,1);
     }
 
-    public void passCoordinates(String id, int x, int y){
+    public void passCoordinates(int x, int y){
         String url = "http://www.cs.utep.edu/cheon/cs4330/project/omok/play?pid="+pid+"&move="+x+","+y;
         Log.i("URL", url);
         OmokServer coordinates = new OmokServer();
         coordinates.execute(url);
-                      //http://www.cs.utep.edu/cheon/cs4330/project/omok/play?pid=570498d22d0ec&move=0,5
+        //http://www.cs.utep.edu/cheon/cs4330/project/omok/play?pid=570498d22d0ec&move=0,5
         //http://www.cs.utep.edu/cheon/cs4330/project/omok/play/?pid=5705256bbe934&move=0,5
     }
 
