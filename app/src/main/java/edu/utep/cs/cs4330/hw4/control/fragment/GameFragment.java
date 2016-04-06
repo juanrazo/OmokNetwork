@@ -60,13 +60,16 @@ public class GameFragment extends Fragment {
                     Coordinates playCoordinates;
                     Player player = omokGame.getCurrentPlayer();
                     if (player instanceof Network){
-                        ((Network) omokGame.getCurrentPlayer()).sendCoordinates(previous);
-                        playCoordinates = ((Network) omokGame.getCurrentPlayer()).getCoordinates();
+                        playCoordinates = new Coordinates(1,1);
+                        ((Network) omokGame.getPlayers()[1]).sendCoordinates(previous);
+                        playCoordinates = ((Network) omokGame.getPlayers()[1]).getCoordinates();
+                        Log.i("Network Coordinates", " " + playCoordinates.getX() + ", " + playCoordinates.getY());
                     }
                     else {
                         playCoordinates = new Coordinates(x, y);
                         previous.setX(x);
                         previous.setY(y);
+                        Log.i("Human Coordinates ", " " + x + ", " + y);
                     }
                     if (omokGame.placeStone(playCoordinates)) {
                         boardView.invalidate();

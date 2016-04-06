@@ -12,11 +12,7 @@ import android.widget.RadioButton;
 import edu.utep.cs.cs4330.hw4.R;
 import edu.utep.cs.cs4330.hw4.control.activity.GameActivity;
 import edu.utep.cs.cs4330.hw4.control.activity.NetworkActivity;
-import edu.utep.cs.cs4330.hw4.model.Computer;
 import edu.utep.cs.cs4330.hw4.model.Network;
-import edu.utep.cs.cs4330.hw4.model.StrategyRandom;
-import edu.utep.cs.cs4330.hw4.model.StrategySmart;
-import edu.utep.cs.cs4330.hw4.model.WebServiceHandler;
 
 /**
  * Created by juanrazo on 4/5/16.

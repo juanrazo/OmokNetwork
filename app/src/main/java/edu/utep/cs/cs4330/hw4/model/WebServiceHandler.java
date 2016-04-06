@@ -19,30 +19,38 @@ import java.net.URL;
  */
 public class WebServiceHandler {
 
-    private Coordinates coordinates = new Coordinates();
+    private Coordinates coordinates;
     private boolean isWin = false;
     private boolean isDraw = false;
     private boolean response = false;
     private Coordinates[] winRow = new Coordinates[5];
     private String pid = "";
     private String strategy = "smart";
-    private OmokServer server = new OmokServer();
+    private OmokServer server;
 
     public WebServiceHandler(){
+        coordinates = new Coordinates(1,1);
     }
 
     public void passCoordinates(String id, int x, int y){
-        server.execute("http://www.cs.utep.edu/cheon/cs4330/project/omok/play?pid="+id+"&move="+x+","+y);
+        String url = "http://www.cs.utep.edu/cheon/cs4330/project/omok/play?pid="+pid+"&move="+x+","+y;
+        Log.i("URL", url);
+        OmokServer coordinates = new OmokServer();
+        coordinates.execute(url);
                       //http://www.cs.utep.edu/cheon/cs4330/project/omok/play?pid=570498d22d0ec&move=0,5
+        //http://www.cs.utep.edu/cheon/cs4330/project/omok/play/?pid=5705256bbe934&move=0,5
     }
 
     public void setStrategy(String strategy){
+        server = new OmokServer();
         this.strategy = "http://www.cs.utep.edu/cheon/cs4330/project/omok/new?strategy="+strategy;
     }
 
     public void executeStrategy(){
+        server = new OmokServer();
         server.execute(strategy);
     }
+
     public class OmokServer extends AsyncTask<String, Void, String > {
 
         @Override
@@ -78,6 +86,7 @@ public class WebServiceHandler {
             super.onPostExecute(s);
             try {
                 JSONObject jsonObject = new JSONObject(s);
+                Log.i("JSON object", s);
                 if(jsonObject.has("response") && jsonObject.has("pid")){
                     String response = jsonObject.getString("response");
                     pid = jsonObject.getString("pid");
@@ -97,8 +106,9 @@ public class WebServiceHandler {
                     JSONObject win = new JSONObject(ack);
                     isWin = Boolean.valueOf(win.getString("isWin"));
                     isDraw = Boolean.valueOf(win.getString("isDraw"));
-                    coordinates.setX(Integer.getInteger(win.getString("x")));
-                    coordinates.setY(Integer.getInteger(win.getString("y")));
+                    coordinates.setX(Integer.parseInt(win.getString("x")));
+                    coordinates.setY(Integer.parseInt(win.getString("y")));
+                    Log.i("Coordinates ", ""+coordinates.getX()+", "+coordinates.getY());
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

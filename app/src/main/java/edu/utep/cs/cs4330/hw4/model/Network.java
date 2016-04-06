@@ -2,6 +2,8 @@ package edu.utep.cs.cs4330.hw4.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+
 import java.security.Permission;
 
 /**
@@ -12,6 +14,7 @@ public class Network extends Player {
     private boolean isStrategy = false;
     private WebServiceHandler webServiceHandler;
     private String pid = "";
+
     public Network(boolean playerOne) {
         super(playerOne);
         webServiceHandler = new WebServiceHandler();
@@ -39,11 +42,14 @@ public class Network extends Player {
     }
 
     public void sendCoordinates(Coordinates coordinates){
+        Log.i("PID send", pid);
         webServiceHandler.passCoordinates(pid, coordinates.getX(), coordinates.getY());
     }
 
     public void startStrategy(){
         webServiceHandler.executeStrategy();
+        pid = webServiceHandler.getPid();
+        Log.i("Network PID", pid);
     }
     /**
      * Describe the kinds of special objects contained in this Parcelable's
