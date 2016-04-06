@@ -6,7 +6,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".control.fragment.OnePlayerFragment">
+    tools:context=".control.fragment.NetworkFragment">
     <TextView
         android:id="@+id/textViewPlayerOneName"
         android:layout_width="wrap_content"
@@ -73,7 +73,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/computer_settings"
+        android:text="@string/network_settings"
         android:id="@+id/textView"
         android:layout_below="@+id/textView1"
         android:layout_alignParentLeft="true"

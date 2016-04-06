@@ -23,4 +23,8 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void onButtonNetworkPlayClick(View v){
+        Intent intent= new Intent(getApplicationContext(), NetworkActivity.class);
+        startActivity(intent);
+    }
 }

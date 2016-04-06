@@ -29,6 +29,12 @@ public class OmokGame implements Parcelable{
         turn = 0;
     }
 
+    public OmokGame(int network){
+        board = new Board();
+        players = new Player[2];
+        networkMode();
+    }
+
     protected OmokGame(Parcel in) {
         board = in.readParcelable(Board.class.getClassLoader());
         players[0] = in.readParcelable(Player.class.getClassLoader());
@@ -54,6 +60,10 @@ public class OmokGame implements Parcelable{
         players[1] = strategyMode ? new Computer(false) : new Human(false);
     }
 
+    private void networkMode(){
+        players[0] = new Human(true);
+        players[1] = new Network(false);
+    }
     public boolean placeStone(Coordinates coordinates) {
         int current = turn;
         boolean winState;
