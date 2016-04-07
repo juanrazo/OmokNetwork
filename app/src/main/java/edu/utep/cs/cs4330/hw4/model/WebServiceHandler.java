@@ -44,6 +44,7 @@ public class WebServiceHandler {
     public void setStrategy(String strategy){
         server = new OmokServer();
         this.strategy = "http://www.cs.utep.edu/cheon/cs4330/project/omok/new?strategy="+strategy;
+        Log.i("Strategy", strategy);
     }
 
     public void executeStrategy(){
