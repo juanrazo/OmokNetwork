@@ -115,8 +115,6 @@ public class WebServiceHandler {
                 e.printStackTrace();
             }
             //{"response":true,"ack_move":{"x":0,"y":4,"isWin":false,"isDraw":false,"row":[]},"move":{"x":1,"y":2,"isWin":false,"isDraw":false,"row":[]}}
-
-            Log.i("Omok Info content", s);
         }
     }
 

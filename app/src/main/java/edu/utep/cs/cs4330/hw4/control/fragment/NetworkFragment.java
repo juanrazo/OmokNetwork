@@ -77,10 +77,10 @@ public class NetworkFragment extends Fragment {
         super.onResume();
         if(((Network) ((GameActivity) getActivity()).
                 getOmokGame().getPlayers()[1]).isStrategy())
-            radioButtonSmart.setSelected(true);
+            radioButtonRandom.setSelected(true);
 
         else
-            radioButtonRandom.setSelected(true);
+            radioButtonSmart.setSelected(true);
     }
 
     public EditText getEditTextPlayerOne() {
