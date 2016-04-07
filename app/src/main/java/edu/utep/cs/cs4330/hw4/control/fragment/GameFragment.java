@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.concurrent.TimeUnit;
+
 import edu.utep.cs.cs4330.hw4.R;
 import edu.utep.cs.cs4330.hw4.control.activity.GameActivity;
 import edu.utep.cs.cs4330.hw4.model.Board;
@@ -28,7 +30,9 @@ import edu.utep.cs.cs4330.hw4.view.BoardView;
 public class GameFragment extends Fragment {
     private BoardView boardView;
     private TextView textViewTurn;
+    private boolean net = false;
     private Coordinates previous = new Coordinates();
+    private Coordinates playCoordinates = new Coordinates();
     public GameFragment() {
         // Required empty public constructor
     }
@@ -57,19 +61,23 @@ public class GameFragment extends Fragment {
                     if (event.getY() % stepY > stepY / 2) {
                         y++;
                     }
-                    Coordinates playCoordinates;
+
+
                     Player player = omokGame.getCurrentPlayer();
-                    if (player instanceof Network){
-                        playCoordinates = new Coordinates(1,1);
-                        ((Network) omokGame.getPlayers()[1]).sendCoordinates(previous);
-                        playCoordinates = ((Network) omokGame.getPlayers()[1]).getCoordinates();
-                        Log.i("Network Coordinates", " " + playCoordinates.getX() + ", " + playCoordinates.getY());
-                    }
-                    else {
-                        playCoordinates = new Coordinates(x, y);
+
+                    if (player instanceof Computer)
+                        playCoordinates = ((Computer) omokGame.getCurrentPlayer()).findCoordinates(omokGame.getBoard().getBoard());
+
+                    if (player instanceof Human) {
                         previous.setX(x);
                         previous.setY(y);
+                        playCoordinates = new Coordinates(x, y);
                         Log.i("Human Coordinates ", " " + x + ", " + y);
+                        net = true;
+                    }
+                    if (net){
+                        ((Network) omokGame.getPlayers()[1]).sendCoordinates(previous);
+                        net=false;
                     }
                     if (omokGame.placeStone(playCoordinates)) {
                         boardView.invalidate();
@@ -81,6 +89,28 @@ public class GameFragment extends Fragment {
                         AlertDialog dialog = builder.create();
                         dialog.show();
                     }
+
+                    if (player instanceof Network){
+                        try {
+                            TimeUnit.SECONDS.sleep(3);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        playCoordinates = ((Network) omokGame.getPlayers()[1]).getCoordinates();
+
+                        if (omokGame.placeStone(playCoordinates)) {
+                            boardView.invalidate();
+                            final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                            if (player instanceof Human)
+                                builder.setMessage(((Human) player).getName() + getResources().getString(R.string.win_message));
+                            else
+                                builder.setMessage(getResources().getString(R.string.loss_message));
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+                        }
+                    }
+
+
                     if (omokGame.getTurn() == 0)
                         textViewTurn.setText(R.string.player_one_turn);
                     else

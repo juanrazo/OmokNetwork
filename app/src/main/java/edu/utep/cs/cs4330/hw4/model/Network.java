@@ -43,7 +43,7 @@ public class Network extends Player {
 
     public void sendCoordinates(Coordinates coordinates){
         Log.i("PID send", pid);
-        webServiceHandler.passCoordinates(pid, coordinates.getX(), coordinates.getY());
+        webServiceHandler.passCoordinates(coordinates.getX(), coordinates.getY());
     }
 
     public void startStrategy(){
