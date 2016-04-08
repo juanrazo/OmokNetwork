@@ -76,7 +76,7 @@ public class NetworkFragment extends Fragment {
     public void onResume() {
         super.onResume();
         if(((Network) ((GameActivity) getActivity()).
-                getOmokGame().getPlayers()[1]).isStrategy())
+                getOmokGame().getPlayers()[1]).isSmart())
             radioButtonRandom.setSelected(true);
 
         else

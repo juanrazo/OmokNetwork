@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import edu.utep.cs.cs4330.hw4.R;
@@ -35,7 +36,6 @@ public class GameFragment extends Fragment {
     private BoardView boardView;
     private TextView textViewTurn;
     private boolean net = false;
-    private Coordinates previous = new Coordinates();
     private Coordinates playCoordinates = new Coordinates();
     public GameFragment() {
         // Required empty public constructor
@@ -65,24 +65,16 @@ public class GameFragment extends Fragment {
                     if (event.getY() % stepY > stepY / 2) {
                         y++;
                     }
-                    if(omokGame.isPlaceTaken(x,y)){
+                    if(omokGame.isPlaceOpen(x, y)){
                         Player player = omokGame.getCurrentPlayer();
 
-                        if (player instanceof Computer)
-                            playCoordinates = ((Computer) omokGame.getCurrentPlayer()).findCoordinates(omokGame.getBoard().getBoard());
-
                         if (player instanceof Human) {
-                            previous.setX(x);
-                            previous.setY(y);
                             playCoordinates = new Coordinates(x, y);
                             Log.i("Human Coordinates ", " " + x + ", " + y);
-                            net = true;
+                            if(omokGame.getPlayers()[1] instanceof Network)
+                                ((Network) omokGame.getPlayers()[1]).sendCoordinates(playCoordinates);
                         }
-                        if (net && ((Network) omokGame.getPlayers()[1]) instanceof Network){
-                            Log.i("Inside network", "network");
-                                    ((Network) omokGame.getPlayers()[1]).sendCoordinates(previous);
-                            net=false;
-                        }
+
                         if (omokGame.placeStone(playCoordinates)) {
                             boardView.invalidate();
                             final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -93,10 +85,12 @@ public class GameFragment extends Fragment {
                             AlertDialog dialog = builder.create();
                             dialog.show();
                         }
+                        player = omokGame.getCurrentPlayer();
 
                         if (player instanceof Network){
-                            playCoordinates = ((Network) omokGame.getPlayers()[1]).getCoordinates();
-
+                            Log.i("Inside network", "to place stone");
+                            playCoordinates = ((Network) omokGame.getCurrentPlayer()).getCoordinates();
+                            Log.i("PlayCoor", ""+playCoordinates.getX()+", "+playCoordinates.getY());
                             if (omokGame.placeStone(playCoordinates)) {
                                 boardView.invalidate();
                                 final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -109,6 +103,19 @@ public class GameFragment extends Fragment {
                             }
                         }
 
+                        if (player instanceof Computer) {
+                            playCoordinates = ((Computer) omokGame.getCurrentPlayer()).findCoordinates(omokGame.getBoard().getBoard());
+                            if (omokGame.placeStone(playCoordinates)) {
+                                boardView.invalidate();
+                                final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                if (player instanceof Human)
+                                    builder.setMessage(((Human) player).getName() + getResources().getString(R.string.win_message));
+                                else
+                                    builder.setMessage(getResources().getString(R.string.loss_message));
+                                AlertDialog dialog = builder.create();
+                                dialog.show();
+                            }
+                        }
 
                         if (omokGame.getTurn() == 0)
                             textViewTurn.setText(R.string.player_one_turn);

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.provider.Settings;
 import android.util.Log;
+import android.widget.SeekBar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,6 +16,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Created by juanrazo on 4/5/16.
@@ -30,41 +33,42 @@ public class WebServiceHandler {
     private String strategy = "";
     private OmokServer server;
     private String url = "";
-    private String oldUrl = "";
+    private String json = "";
 
     public WebServiceHandler(){
         coordinates = new Coordinates(1,1);
     }
 
-    public void passCoordinates(int x, int y){
-        OmokServer coordinates = new OmokServer();
+    public void passCoordinates(int x, int y) {
+        //OmokServer sendCoordinates = new OmokServer();
         url = "http://www.cs.utep.edu/cheon/cs4330/project/omok/play?pid="+pid+"&move="+x+","+y;
         Log.i("URL", url);
-        if(!oldUrl.equals(url)) {
-
-            coordinates.execute(url);
-            oldUrl = url;
-        }
-        try {
-            coordinates.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+        new OmokServer().execute(url);
+//        try {
+//            server.get(1500, TimeUnit.MILLISECONDS);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        } catch (TimeoutException e) {
+//            e.printStackTrace();
+//        }
+        Log.i("Omok Set Coor", "" + coordinates.getX() + ", " + coordinates.getY());
+        Log.i("json", json);
+        response = false;
         //http://www.cs.utep.edu/cheon/cs4330/project/omok/play?pid=570498d22d0ec&move=0,5
         //http://www.cs.utep.edu/cheon/cs4330/project/omok/play/?pid=5705256bbe934&move=0,5
     }
 
     public void setStrategy(String strategy){
-        server = new OmokServer();
+       // server = new OmokServer();
         this.strategy = "http://www.cs.utep.edu/cheon/cs4330/project/omok/new?strategy="+strategy;
         Log.i("Strategy", strategy);
     }
 
     public void executeStrategy(){
-        server = new OmokServer();
-        server.execute(strategy);
+
+        new OmokServer().execute(strategy);
     }
 
     public class OmokServer extends AsyncTask<String, Void, String > {
@@ -99,6 +103,7 @@ public class WebServiceHandler {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            json = s;
             try {
                 JSONObject jsonObject = new JSONObject(s);
                 Log.i("JSON object", s);
@@ -123,7 +128,8 @@ public class WebServiceHandler {
                     isDraw = Boolean.valueOf(win.getString("isDraw"));
                     coordinates.setX(Integer.parseInt(win.getString("x")));
                     coordinates.setY(Integer.parseInt(win.getString("y")));
-                    Log.i("Omok Coordinates ", ""+coordinates.getX()+", "+coordinates.getY());
+                    Log.i("Omok Coordinates ", "" + coordinates.getX() + ", " + coordinates.getY());
+                    response = true;
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -133,6 +139,7 @@ public class WebServiceHandler {
     }
 
     public Coordinates getCoordinates(){
+        Log.i("getCoordinates ", ""+coordinates.getX()+", "+coordinates.getY());
         return coordinates;
     }
 

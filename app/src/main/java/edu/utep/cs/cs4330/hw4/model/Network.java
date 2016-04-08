@@ -11,7 +11,7 @@ import java.security.Permission;
  */
 public class Network extends Player {
 
-    private boolean isStrategy = false;
+    private boolean isSmart = false;
     private WebServiceHandler webServiceHandler;
     private String pid = "";
 
@@ -25,16 +25,17 @@ public class Network extends Player {
     }
 
     public void smartWebService(){
+        isSmart = true;
         webServiceHandler.setStrategy("smart");
-        isStrategy = true;
+
     }
 
     public void randomWebService(){
         webServiceHandler.setStrategy("random");
     }
 
-    public boolean isStrategy(){
-        return isStrategy;
+    public boolean isSmart(){
+        return isSmart;
     }
 
     public Coordinates getCoordinates(){
