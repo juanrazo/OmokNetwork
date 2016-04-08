@@ -1,9 +1,10 @@
 package edu.utep.cs.cs4330.hw4.model;
 
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.provider.Settings;
 import android.util.Log;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,6 +14,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by juanrazo on 4/5/16.
@@ -27,16 +29,29 @@ public class WebServiceHandler {
     private String pid = "";
     private String strategy = "";
     private OmokServer server;
+    private String url = "";
+    private String oldUrl = "";
 
     public WebServiceHandler(){
         coordinates = new Coordinates(1,1);
     }
 
     public void passCoordinates(int x, int y){
-        String url = "http://www.cs.utep.edu/cheon/cs4330/project/omok/play?pid="+pid+"&move="+x+","+y;
-        Log.i("URL", url);
         OmokServer coordinates = new OmokServer();
-        coordinates.execute(url);
+        url = "http://www.cs.utep.edu/cheon/cs4330/project/omok/play?pid="+pid+"&move="+x+","+y;
+        Log.i("URL", url);
+        if(!oldUrl.equals(url)) {
+
+            coordinates.execute(url);
+            oldUrl = url;
+        }
+        try {
+            coordinates.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
         //http://www.cs.utep.edu/cheon/cs4330/project/omok/play?pid=570498d22d0ec&move=0,5
         //http://www.cs.utep.edu/cheon/cs4330/project/omok/play/?pid=5705256bbe934&move=0,5
     }
@@ -71,7 +86,6 @@ public class WebServiceHandler {
                     result += current;
                     data = reader.read();
                 }
-
                 return result;
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -109,7 +123,7 @@ public class WebServiceHandler {
                     isDraw = Boolean.valueOf(win.getString("isDraw"));
                     coordinates.setX(Integer.parseInt(win.getString("x")));
                     coordinates.setY(Integer.parseInt(win.getString("y")));
-                    Log.i("Coordinates ", ""+coordinates.getX()+", "+coordinates.getY());
+                    Log.i("Omok Coordinates ", ""+coordinates.getX()+", "+coordinates.getY());
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

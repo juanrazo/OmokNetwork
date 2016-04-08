@@ -1,8 +1,13 @@
 package edu.utep.cs.cs4330.hw4.control.activity;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
@@ -43,6 +48,14 @@ public class NetworkActivity extends GameActivity {
     @Override
     public void startGame() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+//        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+//        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+//
+//        if (!mWifi.isConnected()) {
+//            startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+//        }
+
 
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {

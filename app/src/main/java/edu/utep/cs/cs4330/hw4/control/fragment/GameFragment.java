@@ -4,7 +4,12 @@ package edu.utep.cs.cs4330.hw4.control.fragment;
  * Created by juanrazo on 4/5/16.
  */
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -18,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 
 import edu.utep.cs.cs4330.hw4.R;
 import edu.utep.cs.cs4330.hw4.control.activity.GameActivity;
-import edu.utep.cs.cs4330.hw4.model.Board;
 import edu.utep.cs.cs4330.hw4.model.Computer;
 import edu.utep.cs.cs4330.hw4.model.Coordinates;
 import edu.utep.cs.cs4330.hw4.model.Human;
@@ -61,43 +65,24 @@ public class GameFragment extends Fragment {
                     if (event.getY() % stepY > stepY / 2) {
                         y++;
                     }
+                    if(omokGame.isPlaceTaken(x,y)){
+                        Player player = omokGame.getCurrentPlayer();
 
+                        if (player instanceof Computer)
+                            playCoordinates = ((Computer) omokGame.getCurrentPlayer()).findCoordinates(omokGame.getBoard().getBoard());
 
-                    Player player = omokGame.getCurrentPlayer();
-
-                    if (player instanceof Computer)
-                        playCoordinates = ((Computer) omokGame.getCurrentPlayer()).findCoordinates(omokGame.getBoard().getBoard());
-
-                    if (player instanceof Human) {
-                        previous.setX(x);
-                        previous.setY(y);
-                        playCoordinates = new Coordinates(x, y);
-                        Log.i("Human Coordinates ", " " + x + ", " + y);
-                        net = true;
-                    }
-                    if (net){
-                        ((Network) omokGame.getPlayers()[1]).sendCoordinates(previous);
-                        net=false;
-                    }
-                    if (omokGame.placeStone(playCoordinates)) {
-                        boardView.invalidate();
-                        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                        if (player instanceof Human)
-                            builder.setMessage(((Human) player).getName() + getResources().getString(R.string.win_message));
-                        else
-                            builder.setMessage(getResources().getString(R.string.loss_message));
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
-                    }
-
-                    if (player instanceof Network){
-                        try {
-                            TimeUnit.SECONDS.sleep(3);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                        if (player instanceof Human) {
+                            previous.setX(x);
+                            previous.setY(y);
+                            playCoordinates = new Coordinates(x, y);
+                            Log.i("Human Coordinates ", " " + x + ", " + y);
+                            net = true;
                         }
-                        playCoordinates = ((Network) omokGame.getPlayers()[1]).getCoordinates();
-
+                        if (net && ((Network) omokGame.getPlayers()[1]) instanceof Network){
+                            Log.i("Inside network", "network");
+                                    ((Network) omokGame.getPlayers()[1]).sendCoordinates(previous);
+                            net=false;
+                        }
                         if (omokGame.placeStone(playCoordinates)) {
                             boardView.invalidate();
                             final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -108,16 +93,31 @@ public class GameFragment extends Fragment {
                             AlertDialog dialog = builder.create();
                             dialog.show();
                         }
+
+                        if (player instanceof Network){
+                            playCoordinates = ((Network) omokGame.getPlayers()[1]).getCoordinates();
+
+                            if (omokGame.placeStone(playCoordinates)) {
+                                boardView.invalidate();
+                                final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                if (player instanceof Human)
+                                    builder.setMessage(((Human) player).getName() + getResources().getString(R.string.win_message));
+                                else
+                                    builder.setMessage(getResources().getString(R.string.loss_message));
+                                AlertDialog dialog = builder.create();
+                                dialog.show();
+                            }
+                        }
+
+
+                        if (omokGame.getTurn() == 0)
+                            textViewTurn.setText(R.string.player_one_turn);
+                        else
+                            textViewTurn.setText(R.string.player_two_turn);
+                        boardView.updateBoard(omokGame.getBoard().getBoard());
+                        boardView.invalidate();
+                        return true;
                     }
-
-
-                    if (omokGame.getTurn() == 0)
-                        textViewTurn.setText(R.string.player_one_turn);
-                    else
-                        textViewTurn.setText(R.string.player_two_turn);
-                    boardView.updateBoard(omokGame.getBoard().getBoard());
-                    boardView.invalidate();
-                    return true;
                 }
                 return false;
             }
@@ -142,4 +142,16 @@ public class GameFragment extends Fragment {
     public void setBoardView(BoardView boardView) {
         this.boardView = boardView;
     }
+
+//    private boolean isNetworkConnected() {
+//        try {
+//            ConnectivityManager mConnectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+//            NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+//            return (mNetworkInfo == null) ? false : true;
+//
+//        }catch (NullPointerException e){
+//            return false;
+//
+//        }
+//    }
 }

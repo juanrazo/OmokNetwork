@@ -50,6 +50,12 @@ public class Board implements Parcelable {
         return false;
     }
 
+    public boolean isPlaceOpen(int x, int y){
+        if(board[x][y]==' ')
+            return true;
+        return false;
+    }
+
     public char[][] getBoard() {
         return board;
     }
@@ -93,7 +99,7 @@ public class Board implements Parcelable {
     * else use recursion to return an integer
     */
     private int east(int x, int y, char player) {
-        if (x >= BOARDSIZE )
+        if (x>BOARDSIZE-1 || y>BOARDSIZE-1 || x<0 || y<0 )
             return 0;
         if (board[x][y] == player) {
             return 1 + east(x + 1, y, player);
@@ -101,7 +107,7 @@ public class Board implements Parcelable {
     }
 
     private int west(int x, int y, char player) {
-        if (x < 0)
+        if (x>BOARDSIZE-1 || y>BOARDSIZE-1 || x<0 || y<0)
             return 0;
         if (board[x][y] == player) {
             return 1 + west(x - 1, y, player);
@@ -109,7 +115,7 @@ public class Board implements Parcelable {
     }
 
     private int south(int x, int y, char player) {
-        if (y >= BOARDSIZE)
+        if (x>BOARDSIZE-1 || y>BOARDSIZE-1 || x<0 || y<0)
             return 0;
         if (board[x][y] == player) {
             return 1 + south(x, y + 1, player);
@@ -117,7 +123,7 @@ public class Board implements Parcelable {
     }
 
     private int north(int x, int y, char player) {
-        if (y >= BOARDSIZE)
+        if (x>BOARDSIZE-1 || y>BOARDSIZE-1 || x<0 || y<0)
             return 0;
         if (board[x][y] == player) {
             return 1 + north(x, y - 1, player);
@@ -125,7 +131,7 @@ public class Board implements Parcelable {
     }
 
     private int northWest(int x, int y, char player) {
-        if (x < 0 || y < 0)
+        if (x>BOARDSIZE-1 || y>BOARDSIZE-1 || x<0 || y<0)
             return 0;
         if (board[x][y] == player) {
             return 1 + northWest(x - 1, y - 1, player);
@@ -134,7 +140,7 @@ public class Board implements Parcelable {
 
     private int northEast(int x, int y, char player) {
         // Check the array for out of bounds in 2D array
-        if (x >= BOARDSIZE || y < 0)
+        if (x>BOARDSIZE-1 || y>BOARDSIZE-1 || x<0 || y<0)
             //if out of bounds then get out with a 0
             return 0;
         // Check if the place is taken and return 1
@@ -144,7 +150,7 @@ public class Board implements Parcelable {
     }
 
     private int southWest(int x, int y, char player) {
-        if (y >= BOARDSIZE || x < 0)
+        if (x>BOARDSIZE-1 || y>BOARDSIZE-1 || x<0 || y<0)
             return 0;
         if (board[x][y] == player) {
             return 1 + southWest(x - 1, y + 1, player);
@@ -152,7 +158,7 @@ public class Board implements Parcelable {
     }
 
     private int southEast(int x, int y, char player) {
-        if (x >= BOARDSIZE || y >= BOARDSIZE)
+        if (x>BOARDSIZE-1 || y>BOARDSIZE-1 || x<0 || y<0)
             return 0;
         if (board[x][y] == player) {
             return 1 + southEast(x + 1, y + 1, player);
