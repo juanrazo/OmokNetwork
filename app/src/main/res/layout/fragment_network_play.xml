@@ -93,7 +93,7 @@
             android:layout_height="wrap_content"
             android:text="@string/random"
             android:id="@+id/radioButtonRandom"
-            android:checked="false" />
+            android:checked="true" />
 
         <RadioButton
             android:layout_width="wrap_content"

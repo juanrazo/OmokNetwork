@@ -1,9 +1,11 @@
 package edu.utep.cs.cs4330.hw4.model;
 
 import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -14,6 +16,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import edu.utep.cs.cs4330.hw4.view.BoardView;
+
 /**
  * Created by juanrazo on 4/5/16.
  */
@@ -22,39 +26,41 @@ public class WebServiceHandler {
     private Coordinates coordinates;
     private boolean isWin = false;
     private boolean isDraw = false;
-    private boolean response = false;
     private Coordinates[] winRow = new Coordinates[5];
     private String pid = "";
-    private String strategy = "smart";
-    private OmokServer server;
-
+    private String strategy = "random";
+    private String url = "";
+    private BoardView view;
     public WebServiceHandler(){
-        coordinates = new Coordinates(1,1);
+        coordinates = new Coordinates();
     }
 
-    public void passCoordinates(String id, int x, int y){
-        String url = "http://www.cs.utep.edu/cheon/cs4330/project/omok/play?pid="+pid+"&move="+x+","+y;
+    public void passCoordinates(int x, int y,View view) {
+        this.view = (BoardView) (BoardView) view;
+        OmokServer sendCoordinates = new OmokServer();
+        url = "http://www.cs.utep.edu/cheon/cs4330/project/omok/play?pid="+pid+"&move="+x+","+y;
         Log.i("URL", url);
-        OmokServer coordinates = new OmokServer();
-        coordinates.execute(url);
-                      //http://www.cs.utep.edu/cheon/cs4330/project/omok/play?pid=570498d22d0ec&move=0,5
+        sendCoordinates.execute(url);
+        //http://www.cs.utep.edu/cheon/cs4330/project/omok/play?pid=570498d22d0ec&move=0,5
         //http://www.cs.utep.edu/cheon/cs4330/project/omok/play/?pid=5705256bbe934&move=0,5
     }
 
     public void setStrategy(String strategy){
-        server = new OmokServer();
+       // server = new OmokServer();
         this.strategy = "http://www.cs.utep.edu/cheon/cs4330/project/omok/new?strategy="+strategy;
+        Log.i("Set Strategy", strategy);
     }
 
     public void executeStrategy(){
-        server = new OmokServer();
-        server.execute(strategy);
+        Log.i("Execute Strategy", strategy);
+        new OmokServer().execute(strategy);
     }
 
     public class OmokServer extends AsyncTask<String, Void, String > {
 
         @Override
         protected String doInBackground(String... params) {
+            Log.i("Do Called", "Enter");
             String result = "";
             URL url;
             HttpURLConnection urlConnection = null;
@@ -70,19 +76,19 @@ public class WebServiceHandler {
                     result += current;
                     data = reader.read();
                 }
-
                 return result;
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
+            Log.i("Do Called", "END");
             return null;
         }
 
         @Override
         protected void onPostExecute(String s) {
+            Log.i("PostEx Called", "Enter");
             super.onPostExecute(s);
             try {
                 JSONObject jsonObject = new JSONObject(s);
@@ -108,14 +114,34 @@ public class WebServiceHandler {
                     isDraw = Boolean.valueOf(win.getString("isDraw"));
                     coordinates.setX(Integer.parseInt(win.getString("x")));
                     coordinates.setY(Integer.parseInt(win.getString("y")));
-                    Log.i("Coordinates ", ""+coordinates.getX()+", "+coordinates.getY());
+                    Log.i("Omok Coordinates ", "" + coordinates.getX() + ", " + coordinates.getY());
+
+                    long downTime = SystemClock.uptimeMillis();
+                    long eventTime = SystemClock.uptimeMillis() + 100;
+                    float x = 0.0f;
+                    float y = 0.0f;
+                    x = (view.getWidth()/9) * Float.parseFloat(win.getString("x"));
+                    y = (view.getHeight()/9) * Float.parseFloat(win.getString("y"));
+                    Log.i("to float x: ", Float.toString(x));
+                    Log.i("to float y: ", Float.toString(y));
+
+                    int metaState = 0;
+                    MotionEvent motionEvent = MotionEvent.obtain(
+                            downTime,
+                            eventTime,
+                            MotionEvent.ACTION_UP,
+                            x,
+                            y,
+                            metaState
+                    );
+
+                    view.dispatchTouchEvent(motionEvent);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            Log.i("PostEx Called", "END");
             //{"response":true,"ack_move":{"x":0,"y":4,"isWin":false,"isDraw":false,"row":[]},"move":{"x":1,"y":2,"isWin":false,"isDraw":false,"row":[]}}
-
-            Log.i("Omok Info content", s);
         }
     }
 

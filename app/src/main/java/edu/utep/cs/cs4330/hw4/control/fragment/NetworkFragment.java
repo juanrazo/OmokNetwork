@@ -2,6 +2,7 @@ package edu.utep.cs.cs4330.hw4.control.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,12 +76,15 @@ public class NetworkFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if(((Network) ((GameActivity) getActivity()).
-                getOmokGame().getPlayers()[1]).isStrategy())
-            radioButtonSmart.setSelected(true);
-
-        else
+        if(!((Network) ((GameActivity) getActivity()).
+                getOmokGame().getPlayers()[1]).isSmart()){
             radioButtonRandom.setSelected(true);
+            Log.i("On Resume", "random true");
+        }
+        else{
+            radioButtonSmart.setSelected(true);
+            Log.i("On Resume", "smart true");
+        }
     }
 
     public EditText getEditTextPlayerOne() {

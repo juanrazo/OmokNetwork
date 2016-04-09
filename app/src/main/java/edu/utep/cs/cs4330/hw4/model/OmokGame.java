@@ -60,6 +60,9 @@ public class OmokGame implements Parcelable{
         players[1] = strategyMode ? new Computer(false) : new Human(false);
     }
 
+    public boolean isPlaceOpen(int x, int y){
+        return board.isPlaceOpen(x,y);
+    }
     private void networkMode(){
         players[0] = new Human(true);
         players[1] = new Network(false);

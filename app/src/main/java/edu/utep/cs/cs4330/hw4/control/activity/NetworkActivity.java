@@ -1,24 +1,27 @@
 package edu.utep.cs.cs4330.hw4.control.activity;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.widget.Toast;
 
 import edu.utep.cs.cs4330.hw4.R;
 import edu.utep.cs.cs4330.hw4.control.fragment.GameFragment;
 import edu.utep.cs.cs4330.hw4.control.fragment.NetworkFragment;
 import edu.utep.cs.cs4330.hw4.model.Board;
-import edu.utep.cs.cs4330.hw4.model.Computer;
 import edu.utep.cs.cs4330.hw4.model.Human;
 import edu.utep.cs.cs4330.hw4.model.Network;
 import edu.utep.cs.cs4330.hw4.model.OmokGame;
-import edu.utep.cs.cs4330.hw4.model.StrategyRandom;
-import edu.utep.cs.cs4330.hw4.model.StrategySmart;
 
 /**
  * Created by juanrazo on 4/5/16.
@@ -44,15 +47,28 @@ public class NetworkActivity extends GameActivity {
     public void startGame() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
+        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+        if (!mWifi.isConnected()) {
+            startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+        }
+
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 NetworkFragment settingsFragment = findNetworkFragment();
                 GameFragment gameFragment = findGameFragment();
                 ((Human) omokGame.getPlayers()[0]).setName(settingsFragment.getEditTextPlayerOne().getText().toString());
-                if (settingsFragment.getRadioButtonRandom().isSelected())
+
+                if (!((Network) omokGame.getPlayers()[1]).isSmart()){
+                    Log.i("startGame()", "randomWebService");
                     ((Network) omokGame.getPlayers()[1]).randomWebService();
-                else
+                }
+                else{
+                    Log.i("startGame()", "smartWebService");
                     ((Network) omokGame.getPlayers()[1]).smartWebService();
+                }
+
                 ((Network) omokGame.getPlayers()[1]).startStrategy();
                 omokGame.setBoard(new Board());
                 omokGame.setGameRunning(true);

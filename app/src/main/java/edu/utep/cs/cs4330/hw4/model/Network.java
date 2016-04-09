@@ -3,17 +3,22 @@ package edu.utep.cs.cs4330.hw4.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.View;
 
 import java.security.Permission;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Created by juanrazo on 4/5/16.
  */
 public class Network extends Player {
 
-    private boolean isStrategy = false;
+    private boolean isSmart = false;
     private WebServiceHandler webServiceHandler;
     private String pid = "";
+    private Coordinates networkCoordinates = new Coordinates();
 
     public Network(boolean playerOne) {
         super(playerOne);
@@ -25,25 +30,28 @@ public class Network extends Player {
     }
 
     public void smartWebService(){
+        isSmart = true;
         webServiceHandler.setStrategy("smart");
-        isStrategy = true;
+
     }
 
     public void randomWebService(){
+        isSmart = false;
         webServiceHandler.setStrategy("random");
     }
 
-    public boolean isStrategy(){
-        return isStrategy;
+    public boolean isSmart(){
+        return isSmart;
     }
 
     public Coordinates getCoordinates(){
-        return webServiceHandler.getCoordinates();
+        return networkCoordinates;
     }
 
-    public void sendCoordinates(Coordinates coordinates){
+    public void sendCoordinates(Coordinates coordinates, View view){
         Log.i("PID send", pid);
-        webServiceHandler.passCoordinates(pid, coordinates.getX(), coordinates.getY());
+        webServiceHandler.passCoordinates(coordinates.getX(), coordinates.getY(), view);
+        networkCoordinates = webServiceHandler.getCoordinates();
     }
 
     public void startStrategy(){
@@ -72,7 +80,7 @@ public class Network extends Player {
      */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-
+        dest.writeString(pid);
     }
 
 
