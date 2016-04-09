@@ -18,12 +18,9 @@ import edu.utep.cs.cs4330.hw4.R;
 import edu.utep.cs.cs4330.hw4.control.fragment.GameFragment;
 import edu.utep.cs.cs4330.hw4.control.fragment.NetworkFragment;
 import edu.utep.cs.cs4330.hw4.model.Board;
-import edu.utep.cs.cs4330.hw4.model.Computer;
 import edu.utep.cs.cs4330.hw4.model.Human;
 import edu.utep.cs.cs4330.hw4.model.Network;
 import edu.utep.cs.cs4330.hw4.model.OmokGame;
-import edu.utep.cs.cs4330.hw4.model.StrategyRandom;
-import edu.utep.cs.cs4330.hw4.model.StrategySmart;
 
 /**
  * Created by juanrazo on 4/5/16.
@@ -49,13 +46,12 @@ public class NetworkActivity extends GameActivity {
     public void startGame() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-//        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-//        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-//
-//        if (!mWifi.isConnected()) {
-//            startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-//        }
+        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
+        if (!mWifi.isConnected()) {
+            startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+        }
 
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {

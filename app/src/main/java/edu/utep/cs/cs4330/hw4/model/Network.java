@@ -79,7 +79,7 @@ public class Network extends Player {
      */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-
+        dest.writeString(pid);
     }
 
 

@@ -26,7 +26,6 @@ public class WebServiceHandler {
     private Coordinates coordinates;
     private boolean isWin = false;
     private boolean isDraw = false;
-    private boolean response = false;
     private Coordinates[] winRow = new Coordinates[5];
     private String pid = "";
     private String strategy = "";
@@ -34,7 +33,7 @@ public class WebServiceHandler {
     private String json = "";
     private BoardView view;
     public WebServiceHandler(){
-        coordinates = new Coordinates(10,10);
+        coordinates = new Coordinates();
     }
 
     public void passCoordinates(int x, int y,View view) {
@@ -43,14 +42,6 @@ public class WebServiceHandler {
         url = "http://www.cs.utep.edu/cheon/cs4330/project/omok/play?pid="+pid+"&move="+x+","+y;
         Log.i("URL", url);
         sendCoordinates.execute(url);
-
-        if(sendCoordinates.getStatus() != AsyncTask.Status.FINISHED){
-            // My AsyncTask is done and onPostExecute was called
-            Log.i("Omok Set Coor", "" + coordinates.getX() + ", " + coordinates.getY());
-            Log.i("json", json);
-        }
-
-        response = false;
         //http://www.cs.utep.edu/cheon/cs4330/project/omok/play?pid=570498d22d0ec&move=0,5
         //http://www.cs.utep.edu/cheon/cs4330/project/omok/play/?pid=5705256bbe934&move=0,5
     }
@@ -126,21 +117,7 @@ public class WebServiceHandler {
                     coordinates.setX(Integer.parseInt(win.getString("x")));
                     coordinates.setY(Integer.parseInt(win.getString("y")));
                     Log.i("Omok Coordinates ", "" + coordinates.getX() + ", " + coordinates.getY());
-                    response = true;
 
-
-//                    int x, y;
-//                    int stepX, stepY;
-//                    stepX = boardView.getWidth() / 9;
-//                    stepY = boardView.getHeight() / 9;
-//                    x = (int) (event.getX() / stepX);
-//                    if (event.getX() % stepX > stepX / 2) {
-//                        x++;
-//                    }
-//                    y = (int) (event.getY() / stepY);
-//                    if (event.getY() % stepY > stepY / 2) {
-//                        y++;
-//                    }
                     long downTime = SystemClock.uptimeMillis();
                     long eventTime = SystemClock.uptimeMillis() + 100;
                     float x = 0.0f;
@@ -149,7 +126,7 @@ public class WebServiceHandler {
                     y = (view.getHeight()/9) * Float.parseFloat(win.getString("y"));
                     Log.i("to float x: ", Float.toString(x));
                     Log.i("to float y: ", Float.toString(y));
-                    // List of meta states found here:     developer.android.com/reference/android/view/KeyEvent.html#getMetaState()
+
                     int metaState = 0;
                     MotionEvent motionEvent = MotionEvent.obtain(
                             downTime,
@@ -160,7 +137,6 @@ public class WebServiceHandler {
                             metaState
                     );
 
-                    // Dispatch touch event to view
                     view.dispatchTouchEvent(motionEvent);
                 }
             } catch (JSONException e) {
