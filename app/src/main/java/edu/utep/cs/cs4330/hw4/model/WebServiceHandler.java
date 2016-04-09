@@ -1,10 +1,10 @@
 package edu.utep.cs.cs4330.hw4.model;
 
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.provider.Settings;
+import android.os.SystemClock;
 import android.util.Log;
-import android.widget.SeekBar;
+import android.view.MotionEvent;
+import android.view.View;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,9 +15,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+
+import edu.utep.cs.cs4330.hw4.view.BoardView;
 
 /**
  * Created by juanrazo on 4/5/16.
@@ -31,30 +30,26 @@ public class WebServiceHandler {
     private Coordinates[] winRow = new Coordinates[5];
     private String pid = "";
     private String strategy = "";
-    private OmokServer server;
     private String url = "";
     private String json = "";
-
+    private BoardView view;
     public WebServiceHandler(){
-        coordinates = new Coordinates(1,1);
+        coordinates = new Coordinates(10,10);
     }
 
-    public void passCoordinates(int x, int y) {
-        //OmokServer sendCoordinates = new OmokServer();
+    public void passCoordinates(int x, int y,View view) {
+        this.view = (BoardView) (BoardView) view;
+        OmokServer sendCoordinates = new OmokServer();
         url = "http://www.cs.utep.edu/cheon/cs4330/project/omok/play?pid="+pid+"&move="+x+","+y;
         Log.i("URL", url);
-        new OmokServer().execute(url);
-//        try {
-//            server.get(1500, TimeUnit.MILLISECONDS);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        } catch (ExecutionException e) {
-//            e.printStackTrace();
-//        } catch (TimeoutException e) {
-//            e.printStackTrace();
-//        }
-        Log.i("Omok Set Coor", "" + coordinates.getX() + ", " + coordinates.getY());
-        Log.i("json", json);
+        sendCoordinates.execute(url);
+
+        if(sendCoordinates.getStatus() != AsyncTask.Status.FINISHED){
+            // My AsyncTask is done and onPostExecute was called
+            Log.i("Omok Set Coor", "" + coordinates.getX() + ", " + coordinates.getY());
+            Log.i("json", json);
+        }
+
         response = false;
         //http://www.cs.utep.edu/cheon/cs4330/project/omok/play?pid=570498d22d0ec&move=0,5
         //http://www.cs.utep.edu/cheon/cs4330/project/omok/play/?pid=5705256bbe934&move=0,5
@@ -75,6 +70,7 @@ public class WebServiceHandler {
 
         @Override
         protected String doInBackground(String... params) {
+            Log.i("Do Called", "Enter");
             String result = "";
             URL url;
             HttpURLConnection urlConnection = null;
@@ -96,12 +92,13 @@ public class WebServiceHandler {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
+            Log.i("Do Called", "END");
             return null;
         }
 
         @Override
         protected void onPostExecute(String s) {
+            Log.i("PostEx Called", "Enter");
             super.onPostExecute(s);
             json = s;
             try {
@@ -130,16 +127,51 @@ public class WebServiceHandler {
                     coordinates.setY(Integer.parseInt(win.getString("y")));
                     Log.i("Omok Coordinates ", "" + coordinates.getX() + ", " + coordinates.getY());
                     response = true;
+
+
+//                    int x, y;
+//                    int stepX, stepY;
+//                    stepX = boardView.getWidth() / 9;
+//                    stepY = boardView.getHeight() / 9;
+//                    x = (int) (event.getX() / stepX);
+//                    if (event.getX() % stepX > stepX / 2) {
+//                        x++;
+//                    }
+//                    y = (int) (event.getY() / stepY);
+//                    if (event.getY() % stepY > stepY / 2) {
+//                        y++;
+//                    }
+                    long downTime = SystemClock.uptimeMillis();
+                    long eventTime = SystemClock.uptimeMillis() + 100;
+                    float x = 0.0f;
+                    float y = 0.0f;
+                    x = (view.getWidth()/9) * Float.parseFloat(win.getString("x"));
+                    y = (view.getHeight()/9) * Float.parseFloat(win.getString("y"));
+                    Log.i("to float x: ", Float.toString(x));
+                    Log.i("to float y: ", Float.toString(y));
+                    // List of meta states found here:     developer.android.com/reference/android/view/KeyEvent.html#getMetaState()
+                    int metaState = 0;
+                    MotionEvent motionEvent = MotionEvent.obtain(
+                            downTime,
+                            eventTime,
+                            MotionEvent.ACTION_UP,
+                            x,
+                            y,
+                            metaState
+                    );
+
+                    // Dispatch touch event to view
+                    view.dispatchTouchEvent(motionEvent);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            Log.i("PostEx Called", "END");
             //{"response":true,"ack_move":{"x":0,"y":4,"isWin":false,"isDraw":false,"row":[]},"move":{"x":1,"y":2,"isWin":false,"isDraw":false,"row":[]}}
         }
     }
 
     public Coordinates getCoordinates(){
-        Log.i("getCoordinates ", ""+coordinates.getX()+", "+coordinates.getY());
         return coordinates;
     }
 

@@ -43,7 +43,7 @@ public class Board implements Parcelable {
     };
 
     public boolean placeStone(Player player, Coordinates coordinates) {
-        if (board[coordinates.getX()][coordinates.getY()] == ' ') {
+        if (coordinates.getX()<BOARDSIZE-1 && coordinates.getY()<BOARDSIZE && board[coordinates.getX()][coordinates.getY()] == ' ') {
             board[coordinates.getX()][coordinates.getY()] = player.getStone();
             return true;
         }

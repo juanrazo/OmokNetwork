@@ -11,6 +11,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.INotificationSideChannel;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,13 +31,17 @@ import edu.utep.cs.cs4330.hw4.model.Human;
 import edu.utep.cs.cs4330.hw4.model.Network;
 import edu.utep.cs.cs4330.hw4.model.OmokGame;
 import edu.utep.cs.cs4330.hw4.model.Player;
+import edu.utep.cs.cs4330.hw4.model.WebServiceHandler;
 import edu.utep.cs.cs4330.hw4.view.BoardView;
 
 public class GameFragment extends Fragment {
     private BoardView boardView;
     private TextView textViewTurn;
-    private boolean net = false;
+    private boolean network = false;
+    private boolean computer = false;
     private Coordinates playCoordinates = new Coordinates();
+    private Player player;
+    OmokGame omokGame;
     public GameFragment() {
         // Required empty public constructor
     }
@@ -46,12 +51,13 @@ public class GameFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_game, container, false);
+        omokGame = ((GameActivity) getActivity()).getOmokGame();
         textViewTurn = (TextView) v.findViewById(R.id.textViewTurn);
         boardView = (BoardView) v.findViewById(R.id.board_view);
         boardView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                OmokGame omokGame = ((GameActivity) getActivity()).getOmokGame();
+
                 if (omokGame.isGameRunning()) {
                     int x, y;
                     int stepX, stepY;
@@ -65,56 +71,35 @@ public class GameFragment extends Fragment {
                     if (event.getY() % stepY > stepY / 2) {
                         y++;
                     }
+                    Log.i("event x: ", Float.toString(event.getX()));
+                    Log.i("event y: ", Float.toString(event.getY()));
+                    Log.i("from float x: ", Integer.toString(x));
+                    Log.i("from float y: ", Integer.toString(y));
                     if(omokGame.isPlaceOpen(x, y)){
-                        Player player = omokGame.getCurrentPlayer();
-
+                        player = omokGame.getCurrentPlayer();
+                        if(network)
+                            placeNetworkStone();
+                        //placeNetworkStone();
                         if (player instanceof Human) {
                             playCoordinates = new Coordinates(x, y);
                             Log.i("Human Coordinates ", " " + x + ", " + y);
-                            if(omokGame.getPlayers()[1] instanceof Network)
-                                ((Network) omokGame.getPlayers()[1]).sendCoordinates(playCoordinates);
+                            placeStone();
+                            if(omokGame.getPlayers()[1] instanceof Network){
+                                ((Network) omokGame.getPlayers()[1]).sendCoordinates(playCoordinates, boardView);
+                                network = true;
+                            }
+                            if(omokGame.getPlayers()[1] instanceof Computer)
+                                computer = true;
+
+                            //placeStone();
                         }
 
-                        if (omokGame.placeStone(playCoordinates)) {
-                            boardView.invalidate();
-                            final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                            if (player instanceof Human)
-                                builder.setMessage(((Human) player).getName() + getResources().getString(R.string.win_message));
-                            else
-                                builder.setMessage(getResources().getString(R.string.loss_message));
-                            AlertDialog dialog = builder.create();
-                            dialog.show();
-                        }
                         player = omokGame.getCurrentPlayer();
 
-                        if (player instanceof Network){
-                            Log.i("Inside network", "to place stone");
-                            playCoordinates = ((Network) omokGame.getCurrentPlayer()).getCoordinates();
-                            Log.i("PlayCoor", ""+playCoordinates.getX()+", "+playCoordinates.getY());
-                            if (omokGame.placeStone(playCoordinates)) {
-                                boardView.invalidate();
-                                final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                                if (player instanceof Human)
-                                    builder.setMessage(((Human) player).getName() + getResources().getString(R.string.win_message));
-                                else
-                                    builder.setMessage(getResources().getString(R.string.loss_message));
-                                AlertDialog dialog = builder.create();
-                                dialog.show();
-                            }
-                        }
 
                         if (player instanceof Computer) {
                             playCoordinates = ((Computer) omokGame.getCurrentPlayer()).findCoordinates(omokGame.getBoard().getBoard());
-                            if (omokGame.placeStone(playCoordinates)) {
-                                boardView.invalidate();
-                                final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                                if (player instanceof Human)
-                                    builder.setMessage(((Human) player).getName() + getResources().getString(R.string.win_message));
-                                else
-                                    builder.setMessage(getResources().getString(R.string.loss_message));
-                                AlertDialog dialog = builder.create();
-                                dialog.show();
-                            }
+                            placeStone();
                         }
 
                         if (omokGame.getTurn() == 0)
@@ -128,8 +113,37 @@ public class GameFragment extends Fragment {
                 }
                 return false;
             }
+
         });
+
+
+
         return v;
+    }
+
+    private void placeNetworkStone(){
+        player = omokGame.getCurrentPlayer();
+        if (player instanceof Network){
+            Log.i("Inside network", "to place stone");
+            playCoordinates = ((Network) omokGame.getCurrentPlayer()).getCoordinates();
+            Log.i("PlayCoor", "" + playCoordinates.getX() + ", " + playCoordinates.getY());
+            placeStone();
+        }
+        boardView.invalidate();
+
+    }
+
+    private void placeStone(){
+        if (omokGame.placeStone(playCoordinates)) {
+            boardView.invalidate();
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            if (player instanceof Human)
+                builder.setMessage(((Human) player).getName() + getResources().getString(R.string.win_message));
+            else
+                builder.setMessage(getResources().getString(R.string.loss_message));
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
     }
 
     @Override
