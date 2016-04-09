@@ -36,6 +36,7 @@ public class Network extends Player {
     }
 
     public void randomWebService(){
+        isSmart = false;
         webServiceHandler.setStrategy("random");
     }
 

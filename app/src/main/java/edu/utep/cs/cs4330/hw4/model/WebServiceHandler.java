@@ -28,9 +28,8 @@ public class WebServiceHandler {
     private boolean isDraw = false;
     private Coordinates[] winRow = new Coordinates[5];
     private String pid = "";
-    private String strategy = "";
+    private String strategy = "random";
     private String url = "";
-    private String json = "";
     private BoardView view;
     public WebServiceHandler(){
         coordinates = new Coordinates();
@@ -49,11 +48,11 @@ public class WebServiceHandler {
     public void setStrategy(String strategy){
        // server = new OmokServer();
         this.strategy = "http://www.cs.utep.edu/cheon/cs4330/project/omok/new?strategy="+strategy;
-        Log.i("Strategy", strategy);
+        Log.i("Set Strategy", strategy);
     }
 
     public void executeStrategy(){
-
+        Log.i("Execute Strategy", strategy);
         new OmokServer().execute(strategy);
     }
 
@@ -91,7 +90,6 @@ public class WebServiceHandler {
         protected void onPostExecute(String s) {
             Log.i("PostEx Called", "Enter");
             super.onPostExecute(s);
-            json = s;
             try {
                 JSONObject jsonObject = new JSONObject(s);
                 Log.i("JSON object", s);

@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.widget.Toast;
 
 import edu.utep.cs.cs4330.hw4.R;
@@ -58,10 +59,16 @@ public class NetworkActivity extends GameActivity {
                 NetworkFragment settingsFragment = findNetworkFragment();
                 GameFragment gameFragment = findGameFragment();
                 ((Human) omokGame.getPlayers()[0]).setName(settingsFragment.getEditTextPlayerOne().getText().toString());
-                if (settingsFragment.getRadioButtonRandom().isSelected())
+
+                if (!((Network) omokGame.getPlayers()[1]).isSmart()){
+                    Log.i("startGame()", "randomWebService");
                     ((Network) omokGame.getPlayers()[1]).randomWebService();
-                else
+                }
+                else{
+                    Log.i("startGame()", "smartWebService");
                     ((Network) omokGame.getPlayers()[1]).smartWebService();
+                }
+
                 ((Network) omokGame.getPlayers()[1]).startStrategy();
                 omokGame.setBoard(new Board());
                 omokGame.setGameRunning(true);
