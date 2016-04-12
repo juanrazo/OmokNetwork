@@ -6,9 +6,12 @@ package edu.utep.cs.cs4330.hw4.control.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -38,6 +41,8 @@ public class GameFragment extends Fragment {
     private Coordinates playCoordinates = new Coordinates();
     private Player player;
     private OmokGame omokGame;
+    private SoundPool sound;
+    private AudioManager manager;
     public GameFragment() {
         // Required empty public constructor
     }
@@ -47,7 +52,10 @@ public class GameFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_game, container, false);
-
+        sound = new SoundPool(1, AudioManager.STREAM_MUSIC, 100);
+        sound.load(getContext(), R.raw.sound_placing_token,1);
+        sound.load(getContext(), R.raw.sound_winning,2);
+        manager = (AudioManager)getContext().getSystemService(Context.AUDIO_SERVICE);
         textViewTurn = (TextView) v.findViewById(R.id.textViewTurn);
         boardView = (BoardView) v.findViewById(R.id.board_view);
         boardView.setOnTouchListener(new View.OnTouchListener() {
@@ -62,6 +70,17 @@ public class GameFragment extends Fragment {
                     Log.i("event y: ", Float.toString(event.getY()));
                     Log.i("from float x: ", Integer.toString(x));
                     Log.i("from float y: ", Integer.toString(y));
+
+                    float curVolume = manager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                    float maxVolume = manager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                    float leftVolume = curVolume/maxVolume;
+                    float rightVolume = curVolume/maxVolume;
+                    int priority = 1;
+                    float normal_playback_rate = 1f;
+                    sound.play(1, leftVolume, rightVolume, priority, 0, normal_playback_rate);
+
+                    //Check if internet is available if so get coordinates from server else
+                    //open wifi actitiviy to connect, also check if playing in network mode
                     if (!isNetworkConnected() && omokGame.getPlayers()[1] instanceof Network) {
                         startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
                     } else {
@@ -83,6 +102,7 @@ public class GameFragment extends Fragment {
                             return true;
                         }
                     }
+                    // Logic for playing in human vs human or human vs computer
                     if (omokGame.getPlayers()[1] instanceof Human || omokGame.getPlayers()[1] instanceof Computer) {
                         player = omokGame.getCurrentPlayer();
                         if (player instanceof Human) {
@@ -119,8 +139,16 @@ public class GameFragment extends Fragment {
         if (omokGame.placeStone(playCoordinates)) {
             boardView.invalidate();
             final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            if (player instanceof Human)
+            if (player instanceof Human){
                 builder.setMessage(((Human) player).getName() + getResources().getString(R.string.win_message));
+                float curVolume = manager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                float maxVolume = manager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                float leftVolume = curVolume/maxVolume;
+                float rightVolume = curVolume/maxVolume;
+                int priority = 2;
+                float normal_playback_rate = 1f;
+                sound.play(2, leftVolume, rightVolume, priority, 0, normal_playback_rate);
+            }
             else
                 builder.setMessage(getResources().getString(R.string.loss_message));
             AlertDialog dialog = builder.create();

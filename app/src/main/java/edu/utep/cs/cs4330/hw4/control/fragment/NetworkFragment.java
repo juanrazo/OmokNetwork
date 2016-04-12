@@ -23,6 +23,7 @@ public class NetworkFragment extends Fragment {
     private RadioButton radioButtonRandom;
     private RadioButton radioButtonSmart;
     private Button buttonNewGame;
+
     public NetworkFragment() {
     }
 

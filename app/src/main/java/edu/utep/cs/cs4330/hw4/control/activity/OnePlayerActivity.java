@@ -28,6 +28,7 @@ public class OnePlayerActivity extends GameActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         omokGame = new OmokGame(true);
+        ((Human) omokGame.getPlayers()[0]).setName("Player One");
     }
 
     @Override

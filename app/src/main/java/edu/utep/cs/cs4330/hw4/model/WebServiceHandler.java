@@ -20,6 +20,10 @@ import edu.utep.cs.cs4330.hw4.view.BoardView;
 
 /**
  * Created by juanrazo on 4/5/16.
+ * This class will connect to the server and initiate a game. The class will also send the human
+ * coordinates to the server and call a touch event on the boardview to place the coordinates from
+ * the server on the method onPostExecute. The OmokServer also handles the Json strings to get
+ * response and server coordinates.
  */
 public class WebServiceHandler {
 

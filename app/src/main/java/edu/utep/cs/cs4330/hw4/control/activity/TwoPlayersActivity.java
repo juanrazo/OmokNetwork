@@ -27,6 +27,8 @@ public class TwoPlayersActivity extends GameActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         omokGame = new OmokGame(false);
+        ((Human)omokGame.getPlayers()[0]).setName("Player One");
+        ((Human)omokGame.getPlayers()[1]).setName("Player Two");
     }
 
     @Override

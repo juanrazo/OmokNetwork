@@ -18,4 +18,8 @@
         android:id="@+id/action_line_color"
         android:orderInCategory="104"
         android:title="@string/action_line_color" />
+    <item
+        android:id="@+id/action_background_music"
+        android:orderInCategory="105"
+        android:title="@string/action_background_music" />
 </menu>

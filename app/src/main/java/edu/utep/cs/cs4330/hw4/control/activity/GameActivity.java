@@ -5,6 +5,7 @@ package edu.utep.cs.cs4330.hw4.control.activity;
  */
 
 import android.content.res.Configuration;
+import android.media.MediaPlayer;
 import android.support.v4.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -27,11 +28,15 @@ import edu.utep.cs.cs4330.hw4.model.OmokGame;
 public abstract class GameActivity extends AppCompatActivity {
     protected ViewPager viewPager;
     protected OmokGame omokGame;
+    private MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+        mediaPlayer = MediaPlayer.create(this, R.raw.background_music);
+        mediaPlayer.setLooping(true);
+        mediaPlayer.start();
         assignLayout(savedInstanceState);
     }
 
@@ -39,12 +44,16 @@ public abstract class GameActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable("game", omokGame);
+        outState.putBoolean("music", mediaPlayer.isPlaying());
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         omokGame = savedInstanceState.getParcelable("game");
+        if(!savedInstanceState.getBoolean("music")){
+            mediaPlayer.pause();
+        }
     }
 
     protected abstract void assignLayout(Bundle savedInstanceState);
@@ -131,6 +140,12 @@ public abstract class GameActivity extends AppCompatActivity {
                     }
                 });
                 break;
+            case R.id.action_background_music:
+                if (mediaPlayer.isPlaying())
+                    mediaPlayer.pause();
+                else
+                    mediaPlayer.start();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -160,6 +175,7 @@ public abstract class GameActivity extends AppCompatActivity {
         this.omokGame = omokGame;
     }
 
+
     abstract class GameFragmentAdapter extends FragmentPagerAdapter {
         SparseArray<Fragment> registeredFragments = new SparseArray<Fragment>();
 
@@ -169,9 +185,7 @@ public abstract class GameActivity extends AppCompatActivity {
         }
 
         @Override
-        public int getCount() {
-            return 2;
-        }
+        public int getCount() {return 2;}
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {

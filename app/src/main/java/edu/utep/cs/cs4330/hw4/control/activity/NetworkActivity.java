@@ -25,6 +25,7 @@ import edu.utep.cs.cs4330.hw4.model.OmokGame;
 
 /**
  * Created by juanrazo on 4/5/16.
+ * The activity selects the random or smart service.
  */
 public class NetworkActivity extends GameActivity {
     @Override
