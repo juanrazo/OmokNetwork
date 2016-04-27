@@ -59,6 +59,14 @@ public class Network extends Player {
         pid = webServiceHandler.getPid();
         Log.i("Network PID", pid);
     }
+
+    public String getPid() {
+        return pid;
+    }
+
+    public void setWebServer(String server){
+        webServiceHandler.setServer(server);
+    }
     /**
      * Describe the kinds of special objects contained in this Parcelable's
      * marshalled representation.

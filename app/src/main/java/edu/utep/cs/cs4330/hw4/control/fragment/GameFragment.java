@@ -86,8 +86,9 @@ public class GameFragment extends Fragment {
                     } else {
                         if (omokGame.isPlaceOpen(x, y)) {
                             player = omokGame.getCurrentPlayer();
-                            if (network)
+                            if (network){
                                 placeNetworkStone();
+                            }
                             if (player instanceof Human) {
                                 playCoordinates = new Coordinates(x, y);
                                 Log.i("Human Coordinates ", " " + x + ", " + y);

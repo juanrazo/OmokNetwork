@@ -35,6 +35,7 @@
     <string name="smart">Smart</string>
     <string name="network_random">Random</string>
     <string name="network_smart">Smart</string>
+    <string name="omokAddress">http://www.cs.utep.edu/cheon/cs4330/project/omok/new?strategy=</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

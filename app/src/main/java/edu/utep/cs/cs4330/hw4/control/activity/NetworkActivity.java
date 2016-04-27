@@ -23,10 +23,6 @@ import edu.utep.cs.cs4330.hw4.model.Human;
 import edu.utep.cs.cs4330.hw4.model.Network;
 import edu.utep.cs.cs4330.hw4.model.OmokGame;
 
-/**
- * Created by juanrazo on 4/5/16.
- * The activity selects the random or smart service.
- */
 public class NetworkActivity extends GameActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,11 +52,12 @@ public class NetworkActivity extends GameActivity {
         }
 
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+
             public void onClick(DialogInterface dialog, int id) {
                 NetworkFragment settingsFragment = findNetworkFragment();
                 GameFragment gameFragment = findGameFragment();
                 ((Human) omokGame.getPlayers()[0]).setName(settingsFragment.getEditTextPlayerOne().getText().toString());
-
+                ((Network) omokGame.getPlayers()[1]).setWebServer(settingsFragment.getEditServer().getText().toString());
                 if (!((Network) omokGame.getPlayers()[1]).isSmart()){
                     Log.i("startGame()", "randomWebService");
                     ((Network) omokGame.getPlayers()[1]).randomWebService();

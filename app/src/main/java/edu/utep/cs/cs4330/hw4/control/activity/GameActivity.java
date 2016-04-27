@@ -51,9 +51,9 @@ public abstract class GameActivity extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         omokGame = savedInstanceState.getParcelable("game");
-        if(!savedInstanceState.getBoolean("music")){
-            mediaPlayer.pause();
-        }
+//        if(!savedInstanceState.getBoolean("music")){
+//            mediaPlayer.pause();
+//        }
     }
 
     protected abstract void assignLayout(Bundle savedInstanceState);

@@ -1,4 +1,7 @@
 package edu.utep.cs.cs4330.hw4.control.fragment;
+/**
+ * Created by juanrazo on 4/5/16.
+ */
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,14 +18,13 @@ import edu.utep.cs.cs4330.hw4.control.activity.GameActivity;
 import edu.utep.cs.cs4330.hw4.control.activity.NetworkActivity;
 import edu.utep.cs.cs4330.hw4.model.Network;
 
-/**
- * Created by juanrazo on 4/5/16.
- */
+
 public class NetworkFragment extends Fragment {
     private EditText editTextPlayerOne;
     private RadioButton radioButtonRandom;
     private RadioButton radioButtonSmart;
     private Button buttonNewGame;
+    private EditText editServer;
 
     public NetworkFragment() {
     }
@@ -32,6 +34,7 @@ public class NetworkFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_network_play, container, false);
         editTextPlayerOne = (EditText) view.findViewById(R.id.editTextPlayerOneName);
+        editServer = (EditText) view.findViewById(R.id.serverAddress);
         radioButtonRandom = (RadioButton) view.findViewById(R.id.radioButtonRandom);
         radioButtonRandom.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,6 +90,8 @@ public class NetworkFragment extends Fragment {
             Log.i("On Resume", "smart true");
         }
     }
+
+    public EditText getEditServer(){return editServer;}
 
     public EditText getEditTextPlayerOne() {
         return editTextPlayerOne;

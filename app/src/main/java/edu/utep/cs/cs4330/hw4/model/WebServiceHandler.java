@@ -34,6 +34,7 @@ public class WebServiceHandler {
     private String pid = "";
     private String strategy = "random";
     private String url = "";
+    private String server = "";
     private BoardView view;
     public WebServiceHandler(){
         coordinates = new Coordinates();
@@ -51,7 +52,8 @@ public class WebServiceHandler {
 
     public void setStrategy(String strategy){
        // server = new OmokServer();
-        this.strategy = "http://www.cs.utep.edu/cheon/cs4330/project/omok/new?strategy="+strategy;
+        //this.strategy = "http://www.cs.utep.edu/cheon/cs4330/project/omok/new?strategy="+strategy;
+        this.strategy= server+strategy;
         Log.i("Set Strategy", strategy);
     }
 
@@ -60,6 +62,9 @@ public class WebServiceHandler {
         new OmokServer().execute(strategy);
     }
 
+    public void setServer(String server){
+        this.server = server;
+    }
     public class OmokServer extends AsyncTask<String, Void, String > {
 
         @Override
